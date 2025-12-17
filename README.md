@@ -62,8 +62,36 @@ Create a simplified Purchase Request & Approval System:
 - receiptPath
 
 **Optional**
-- Approval entity (for tracking individual approvals)
-- RequestItem entity (for line items)
+**Approval Entity** (for tracking individual approvals)
+- id
+- purchaseRequest (reference)
+- approver (reference to User)
+- level (1, 2, etc.)
+- status (PENDING/APPROVED/REJECTED)
+- comments
+- approvedAt
+- createdAt
+
+**RequestItem Entity** (for line items)
+- id
+- purchaseRequest (reference)
+- itemName
+- description
+- quantity
+- unitPrice
+- totalPrice
+
+**AuditLog Entity** (for tracking all changes)
+- id
+- entityType (PurchaseRequest, Approval, etc.)
+- entityId
+- action (CREATED, UPDATED, APPROVED, REJECTED, etc.)
+- performedBy (reference to User)
+- oldValue
+- newValue
+- timestamp
+- ipAddress
+- userAgent
 
 ### API Endpoints
 
@@ -139,3 +167,9 @@ Create a simplified Purchase Request & Approval System:
 | AI Integration | OpenAI Java Client |
 | Build Tool | Gradle |
 | API Documentation | SpringDoc OpenAPI (Swagger) |
+| Containerization | Docker |
+| Cloud Storage | AWS S3 |
+| Deployment | AWS EC2, Docker Hub |
+
+
+**Deployed on AWS EC2** | **Fully Dockerized** | **PostgreSQL Database**
