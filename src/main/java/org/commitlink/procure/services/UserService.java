@@ -2,18 +2,21 @@ package org.commitlink.procure.services;
 
 import lombok.AllArgsConstructor;
 import org.commitlink.procure.dto.UserEntityResponse;
+import org.commitlink.procure.dto.UserListPagination;
 import org.commitlink.procure.dto.UserRegisterRequest;
 import org.commitlink.procure.exceptions.UserNotFoundException;
 import org.commitlink.procure.models.Role;
 import org.commitlink.procure.models.User;
 import org.commitlink.procure.repository.IUserRepository;
-import org.commitlink.procure.utils.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.commitlink.procure.utils.Constants.USER_NOT_FOUND_MESSAGE;
 import static org.commitlink.procure.utils.UserMapper.mapUser;
@@ -44,8 +47,23 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserListPagination getUserList(int page, int size) {
+        int pageNumber = Math.max(0, (page - 1));
+        PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "firstName"));
+        Page<User> pageContent = userRepository.findAll(pageRequest);
+        Iterable<UserEntityResponse> userList = pageContent.getContent().stream().map(user -> mapUser.apply(user)).toList();
+
+        return new UserListPagination(
+                pageContent.getTotalElements(),
+                pageContent.getTotalPages(),
+                pageContent.hasNext(),
+                pageContent.hasPrevious(),
+                userList);
+    }
+
+    @Override
     public UserEntityResponse getUserById(long id) {
-       User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(id)));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(id)));
         return mapUser.apply(user);
     }
 }
