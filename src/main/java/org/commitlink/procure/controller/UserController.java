@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.commitlink.procure.dto.UserEntityResponse;
+import org.commitlink.procure.dto.UserListPagination;
 import org.commitlink.procure.dto.UserRegisterRequest;
 import org.commitlink.procure.services.IUserService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,9 +30,15 @@ public class UserController {
         return userService.userRegister(userRegisterRequest);
     }
 
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UserListPagination getUserList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+        return userService.getUserList(page, size);
+    }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserEntityResponse getUserById(@PathVariable long id){
+    public UserEntityResponse getUserById(@PathVariable long id) {
         return userService.getUserById(id);
     }
 }
