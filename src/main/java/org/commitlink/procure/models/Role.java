@@ -9,7 +9,7 @@ import static org.commitlink.procure.utils.Constants.READ;
 import static org.commitlink.procure.utils.Constants.UPLOAD;
 
 
-public enum Roles {
+public enum Role {
     STAFF(Set.of(CREATE, UPLOAD, READ)) {
         @Override
         public Set<String> getPermissions() {
@@ -34,7 +34,7 @@ public enum Roles {
 
     private final Set<String> permissions;
 
-    Roles(Set<String> permissions) {
+    Role(Set<String> permissions) {
         this.permissions = permissions;
     }
 
