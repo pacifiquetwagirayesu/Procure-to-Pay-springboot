@@ -1,4 +1,4 @@
-package org.commitlink.procure.services;
+package org.commitlink.procure.services.impl;
 
 import lombok.AllArgsConstructor;
 import org.commitlink.procure.dto.UserEntityResponse;
@@ -8,8 +8,8 @@ import org.commitlink.procure.exceptions.UserNotFoundException;
 import org.commitlink.procure.models.Role;
 import org.commitlink.procure.models.User;
 import org.commitlink.procure.repository.IUserRepository;
+import org.commitlink.procure.services.IUserService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
