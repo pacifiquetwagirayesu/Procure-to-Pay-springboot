@@ -10,4 +10,5 @@ public class Constants {
     public static final String PREFIX = "ROLE_";
     public static final String SWAGGER_URL = "/swagger-ui/index.html";
     public static final String INVALID_ROLE_MESSAGE= "Invalid role: '%s' is provided, please select one of: %s";
+    public static final String USER_NOT_FOUND_MESSAGE= "user with id: '%s' not found";
 }

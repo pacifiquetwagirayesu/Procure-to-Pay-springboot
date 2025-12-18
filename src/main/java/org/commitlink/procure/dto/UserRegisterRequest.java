@@ -27,8 +27,8 @@ public record UserRegisterRequest(
         if (password == null || password.isBlank()) throw new InvalidInputException("Password is required");
         if (role == null || role.isBlank()) throw new InvalidInputException("Role is required");
 
-        Set<String> validRoles = Set.of(STAFF.name(), APPROVER_LEVEL_1.name(), APPROVER_LEVEL_2.name(), FINANCE.name())
-                .stream().map(String::toLowerCase).collect(Collectors.toSet());
+        Set<String> validRoles = Set.of(STAFF, APPROVER_LEVEL_1, APPROVER_LEVEL_2, FINANCE)
+                .stream().map(r -> r.name().toLowerCase()).collect(Collectors.toSet());
 
         if (!validRoles.contains(role)) {
             throw new InvalidInputException(INVALID_ROLE_MESSAGE.formatted(role.toLowerCase(), validRoles));
