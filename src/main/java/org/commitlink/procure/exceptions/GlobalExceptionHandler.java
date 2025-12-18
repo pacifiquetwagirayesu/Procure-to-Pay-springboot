@@ -14,4 +14,10 @@ public class GlobalExceptionHandler {
         return new HttpMessage(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), req.getServletPath());
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public HttpMessage exceptionHandler(NotFoundException ex, HttpServletRequest req) {
+        return new HttpMessage(ex.getMessage(), HttpStatus.NOT_FOUND.value(), req.getServletPath());
+    }
+
 }

@@ -14,7 +14,6 @@ import static org.commitlink.procure.utils.Constants.SWAGGER_URL;
 public class HomeController {
     @GetMapping
     public void homePage(HttpServletResponse httpServletResponse) throws IOException {
-//        System.out.println("httpServletResponse = " + httpServletResponse);
         httpServletResponse.sendRedirect(SWAGGER_URL);
 
     }
