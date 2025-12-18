@@ -27,11 +27,12 @@ public class User {
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
     private Long id;
     @Column(nullable = false)
-    private String firstNme;
+    private String firstName;
     private String lastName;
     @Column(unique = true, nullable = false, updatable = false)
     private String email;
     private String role;
+    private String password;
     private Set<String> permissions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
