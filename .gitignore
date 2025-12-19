@@ -6,6 +6,7 @@
 .gradle
 build
 .idea
+.env
 # BlueJ files
 *.ctxt
 

@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @AllArgsConstructor
 public class AuthUser implements UserDetails {
+
   private long id;
   private String username;
   private String firstName;
@@ -30,14 +31,15 @@ public class AuthUser implements UserDetails {
 
   public static AuthUser getUser(User user) {
     return new AuthUser(
-        user.getId(),
-        user.getEmail(),
-        user.getFirstName(),
-        user.getLastName(),
-        user.getPassword(),
-        user.getRole(),
-        user.getPermissions(),
-        user.getCreatedAt(),
-        user.getUpdatedAt());
+      user.getId(),
+      user.getEmail(),
+      user.getFirstName(),
+      user.getLastName(),
+      user.getPassword(),
+      user.getRole(),
+      user.getPermissions(),
+      user.getCreatedAt(),
+      user.getUpdatedAt()
+    );
   }
 }

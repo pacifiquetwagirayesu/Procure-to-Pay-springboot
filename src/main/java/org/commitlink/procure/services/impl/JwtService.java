@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService implements IJwtService {
+
   @Value("${security.jwt.secret-key}")
   @Getter
   private String jwtSecretKey;
@@ -49,23 +50,18 @@ public class JwtService implements IJwtService {
     return buildJwtToken(claims, user, this.refreshTokenExpiration);
   }
 
-  public boolean isTokenValid(String token, AuthUser user) throws JwtException {
+  public boolean isTokenValid(String token) throws JwtException {
     String username = getUsername(token);
-    return username.equals(user.getUsername()) && !isTokenExpired(token);
+    return !username.isBlank();
   }
 
-  private <T> T extractClaims(String token, Function<Claims, T> claimsResolver)
-      throws JwtException {
+  private <T> T extractClaims(String token, Function<Claims, T> claimsResolver) throws JwtException {
     Claims claims = extractAllClaims(token);
     return claimsResolver.apply(claims);
   }
 
   private Claims extractAllClaims(String token) throws JwtException {
-    return Jwts.parser()
-        .setSigningKey(getSignedKey())
-        .build()
-        .parseSignedClaims(token)
-        .getPayload();
+    return Jwts.parser().setSigningKey(getSignedKey()).build().parseSignedClaims(token).getPayload();
   }
 
   private Key getSignedKey() {
@@ -74,18 +70,18 @@ public class JwtService implements IJwtService {
   }
 
   public String buildJwtToken(Map<String, Object> claims, AuthUser user, Long expiration) {
-
-    return Jwts.builder()
-        .claims(claims)
-        .subject(user.getUsername())
-        .issuer(user.getFirstName() + " " + user.getLastName())
-        .issuedAt(new Date(System.currentTimeMillis()))
-        .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSignedKey())
-        .compact();
+    return Jwts
+      .builder()
+      .claims(claims)
+      .subject(user.getUsername())
+      .issuer(user.getFirstName() + " " + user.getLastName())
+      .issuedAt(new Date(System.currentTimeMillis()))
+      .expiration(new Date(System.currentTimeMillis() + expiration))
+      .signWith(getSignedKey())
+      .compact();
   }
 
-  private boolean isTokenExpired(String token) throws JwtException {
+  public boolean isTokenExpired(String token) throws JwtException {
     return extractClaims(token, Claims::getExpiration).before(new Date());
   }
 

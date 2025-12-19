@@ -6,4 +6,6 @@ import org.commitlink.procure.dto.UserLoginRequest;
 
 public interface IAuthService {
   UserLoginEntityResponse userLogin(@Valid UserLoginRequest userLoginRequest);
+
+  UserLoginEntityResponse userRefreshToken(String refreshToken);
 }

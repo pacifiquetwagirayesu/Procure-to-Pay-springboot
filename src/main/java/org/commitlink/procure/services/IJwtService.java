@@ -8,7 +8,8 @@ public interface IJwtService {
 
   String generateRefreshToken(AuthUser user);
 
-  boolean isTokenValid(String token, AuthUser user) throws JwtException;
+  boolean isTokenValid(String token) throws JwtException;
 
   String getUsername(String token);
+  boolean isTokenExpired(String token) throws JwtException;
 }

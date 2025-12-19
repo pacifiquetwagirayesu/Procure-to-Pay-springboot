@@ -5,12 +5,13 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 public record AuthUserResponseEntity(
-    long id,
-    String email,
-    String firstName,
-    String lastName,
-    String role,
-    Set<String> permissions,
-    @JsonIgnore String password,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt) {}
+  long id,
+  String email,
+  String firstName,
+  String lastName,
+  String role,
+  Set<String> permissions,
+  @JsonIgnore String password,
+  LocalDateTime createdAt,
+  LocalDateTime updatedAt
+) {}

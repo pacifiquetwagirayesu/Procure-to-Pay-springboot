@@ -11,24 +11,22 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition(
-    info =
-        @Info(
-            contact =
-                @Contact(
-                    name = "user dev",
-                    email = "user@example.com",
-                    url = "https://example.com"),
-            description = "Procure to Pay System api documentation",
-            version = "0.1",
-            license = @License(name = "License", url = "https://example.com"),
-            termsOfService = "https://example.com/termsOfService"),
-    servers = {@Server(description = "local dev", url = "http://localhost:8080")},
-    security = @SecurityRequirement(name = "BearJWT"))
+  info = @Info(
+    contact = @Contact(name = "user dev", email = "user@example.com", url = "https://example.com"),
+    description = "Procure to Pay System api documentation",
+    version = "0.1",
+    license = @License(name = "License", url = "https://example.com"),
+    termsOfService = "https://example.com/termsOfService"
+  ),
+  servers = { @Server(description = "local dev", url = "http://localhost:8080") },
+  security = @SecurityRequirement(name = "BearJWT")
+)
 @SecurityScheme(
-    name = "BearJWT",
-    description = "JWT Authentication - Paste your token directly (e.g., eyJhbGc...)",
-    scheme = "bearer",
-    type = SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    in = SecuritySchemeIn.HEADER)
+  name = "BearJWT",
+  description = "JWT Authentication - Paste your token directly (e.g., eyJhbGc...)",
+  scheme = "bearer",
+  type = SecuritySchemeType.HTTP,
+  bearerFormat = "JWT",
+  in = SecuritySchemeIn.HEADER
+)
 public class SwaggerConfig {}

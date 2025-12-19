@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @AllArgsConstructor
 public class UserService implements IUserService {
+
   private final IUserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
@@ -31,16 +32,16 @@ public class UserService implements IUserService {
   public long userRegister(UserRegisterRequest ur) {
     Role role = Role.valueOf(ur.role().toUpperCase());
 
-    User user =
-        User.builder()
-            .firstName(ur.firstName())
-            .lastName(ur.lastName())
-            .email(ur.email())
-            .role(role.name())
-            .password(passwordEncoder.encode(ur.password()))
-            .permissions(role.getPermissions())
-            .createdAt(LocalDateTime.now())
-            .build();
+    User user = User
+      .builder()
+      .firstName(ur.firstName())
+      .lastName(ur.lastName())
+      .email(ur.email())
+      .role(role.name())
+      .password(passwordEncoder.encode(ur.password()))
+      .permissions(role.getPermissions())
+      .createdAt(LocalDateTime.now())
+      .build();
 
     User saved = userRepository.save(user);
 
@@ -50,26 +51,22 @@ public class UserService implements IUserService {
   @Override
   public UserListPagination getUserList(int page, int size) {
     int pageNumber = Math.max(0, (page - 1));
-    PageRequest pageRequest =
-        PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "firstName"));
+    PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "firstName"));
     Page<User> pageContent = userRepository.findAll(pageRequest);
-    Iterable<UserEntityResponse> userList =
-        pageContent.getContent().stream().map(user -> mapUser.apply(user)).toList();
+    Iterable<UserEntityResponse> userList = pageContent.getContent().stream().map(user -> mapUser.apply(user)).toList();
 
     return new UserListPagination(
-        pageContent.getTotalElements(),
-        pageContent.getTotalPages(),
-        pageContent.hasNext(),
-        pageContent.hasPrevious(),
-        userList);
+      pageContent.getTotalElements(),
+      pageContent.getTotalPages(),
+      pageContent.hasNext(),
+      pageContent.hasPrevious(),
+      userList
+    );
   }
 
   @Override
   public UserEntityResponse getUserById(long id) {
-    User user =
-        userRepository
-            .findById(id)
-            .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(id)));
+    User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(id)));
     return mapUser.apply(user);
   }
 }

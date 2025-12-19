@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping
 public class HomeController {
+
   @GetMapping
   public void homePage(HttpServletResponse httpServletResponse) throws IOException {
     httpServletResponse.sendRedirect(SWAGGER_URL);
