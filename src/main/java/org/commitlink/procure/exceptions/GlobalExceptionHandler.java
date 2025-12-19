@@ -8,16 +8,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(InvalidInputException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpMessage exceptionHandler(BadRequestException ex, HttpServletRequest req) {
-        return new HttpMessage(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), req.getServletPath());
-    }
+  @ExceptionHandler(InvalidInputException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public HttpMessage exceptionHandler(BadRequestException ex, HttpServletRequest req) {
+    return new HttpMessage(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), req.getServletPath());
+  }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public HttpMessage exceptionHandler(NotFoundException ex, HttpServletRequest req) {
-        return new HttpMessage(ex.getMessage(), HttpStatus.NOT_FOUND.value(), req.getServletPath());
-    }
-
+  @ExceptionHandler(UserNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public HttpMessage exceptionHandler(NotFoundException ex, HttpServletRequest req) {
+    return new HttpMessage(ex.getMessage(), HttpStatus.NOT_FOUND.value(), req.getServletPath());
+  }
 }

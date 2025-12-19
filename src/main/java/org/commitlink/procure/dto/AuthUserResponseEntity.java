@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public record UserEntityResponse(
+public record AuthUserResponseEntity(
     long id,
     String email,
     String firstName,
