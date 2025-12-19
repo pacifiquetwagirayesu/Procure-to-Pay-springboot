@@ -1,9 +1,10 @@
 package org.commitlink.procure.exceptions;
 
-public class InvalidInputException extends BadRequestException{
-    public InvalidInputException() {}
+public class InvalidInputException extends BadRequestException {
 
-    public InvalidInputException(String message) {
-        super(message);
-    }
+  public InvalidInputException() {}
+
+  public InvalidInputException(String message) {
+    super(message);
+  }
 }

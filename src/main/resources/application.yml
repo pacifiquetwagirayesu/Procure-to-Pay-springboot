@@ -22,3 +22,11 @@ springdoc:
     enabled: true
   swagger-ui:
     path: /api-docs
+
+security:
+  jwt:
+    secret-key: ${SECURITY_JWT_SECRET_KEY}
+    expiration: 86400000
+    refresh-token:
+      expiration: 604800000
+    super-admin: ${SECURITY_JWT_SUPER_ADMIN}
