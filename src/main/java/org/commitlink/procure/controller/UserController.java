@@ -11,6 +11,7 @@ import org.commitlink.procure.dto.UserListPagination;
 import org.commitlink.procure.dto.UserRegisterRequest;
 import org.commitlink.procure.services.IUserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,13 +35,13 @@ public class UserController {
     return Map.of(ID, userService.userRegister(userRegisterRequest));
   }
 
-  @GetMapping
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public UserListPagination getUserList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
     return userService.getUserList(page, size);
   }
 
-  @GetMapping("/{id}")
+  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public UserEntityResponse getUserById(@PathVariable long id) {
     return userService.getUserById(id);
