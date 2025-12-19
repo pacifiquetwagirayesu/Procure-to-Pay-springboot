@@ -5,9 +5,9 @@ import org.commitlink.procure.dto.UserListPagination;
 import org.commitlink.procure.dto.UserRegisterRequest;
 
 public interface IUserService {
-    long userRegister(UserRegisterRequest userRegisterRequest);
+  long userRegister(UserRegisterRequest userRegisterRequest);
 
-    UserEntityResponse getUserById(long id);
+  UserEntityResponse getUserById(long id);
 
-    UserListPagination getUserList(int page,int size);
+  UserListPagination getUserList(int page, int size);
 }

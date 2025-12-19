@@ -17,8 +17,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-  config:
-    import: optional:file:../../.env[.properties]
 springdoc:
   api-docs:
     enabled: true

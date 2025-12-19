@@ -1,8 +1,11 @@
 package org.commitlink.procure.controller;
 
+import static org.commitlink.procure.utils.Constants.ID;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.commitlink.procure.dto.UserEntityResponse;
 import org.commitlink.procure.dto.UserListPagination;
 import org.commitlink.procure.dto.UserRegisterRequest;
@@ -20,25 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @Tag(name = "User Endpoints", description = "User registration, retrieve endpoints")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
-    private final IUserService userService;
+  private final IUserService userService;
 
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public long userRegister(@Valid @RequestBody UserRegisterRequest userRegisterRequest) {
-        return userService.userRegister(userRegisterRequest);
-    }
+  @PostMapping("/register")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Map<String, Long> userRegister(
+      @Valid @RequestBody UserRegisterRequest userRegisterRequest) {
+    return Map.of(ID, userService.userRegister(userRegisterRequest));
+  }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public UserListPagination getUserList(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
-        return userService.getUserList(page, size);
-    }
+  @GetMapping
+  @ResponseStatus(HttpStatus.OK)
+  public UserListPagination getUserList(
+      @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int size) {
+    return userService.getUserList(page, size);
+  }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserEntityResponse getUserById(@PathVariable long id) {
-        return userService.getUserById(id);
-    }
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public UserEntityResponse getUserById(@PathVariable long id) {
+    return userService.getUserById(id);
+  }
 }
