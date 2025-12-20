@@ -2,19 +2,18 @@ spring:
   application:
     name: Procure-to-Pay
     version: 1.0
+  config:
+    activate:
+      on-profile: dev
 
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb
-    username: pa
-    password: pass
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     show-sql: true
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
 springdoc:
@@ -25,8 +24,8 @@ springdoc:
 
 security:
   jwt:
-    secret-key: ${SECURITY_JWT_SECRET_KEY}
     expiration: 86400000
+    secret-key: ${SECURITY_JWT_SECRET_KEY}
     refresh-token:
       expiration: 604800000
     super-admin: ${SECURITY_JWT_SUPER_ADMIN}

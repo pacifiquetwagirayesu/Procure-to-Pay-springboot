@@ -34,7 +34,7 @@ public class Constants {
                 """;
   public static final List<String> EXEMPT_FOR_AUTH_FILTER = List.of("/", "/swagger-ui/index.html");
 
-  public static final String USER_REGISTER_URL = "/api/v1/users/register";
+  public static final String USER_URLS = "/api/v1/users/**";
   public static final String AUTH_URL = "/api/v1/auth/*";
 
   // ROLE AND PERMISSION
