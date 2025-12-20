@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  procure-db:
+    image: postgres:15
+    container_name: procure-database
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    networks:
+      - procure-net
+  adminer:
+    image: adminer
+    container_name: database-ui
+    environment:
+      PGADMIN_DEFAULT_EMAIL: procure@example.com
+      PGADMIN_DEFAULT_PASSWORD: procure
+    ports:
+      - "7070:8080"
+    restart: on-failure
+    volumes:
+      - adminer_data:/var/lib/adminer
+    networks:
+      - procure-net
+    profiles:
+      - debug
+volumes:
+  adminer_data:
+  postgres_data:
+networks:
+  procure-net:
+    driver: bridge
