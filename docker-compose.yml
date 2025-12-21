@@ -1,5 +1,19 @@
 version: '3.8'
+
 services:
+  app:
+    image: paccy/procure-to-pay
+    container_name: backend
+    env_file:
+      - .env
+    depends_on:
+      procure-db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - procure-net
+
   procure-db:
     image: postgres:15
     container_name: procure-database
@@ -12,24 +26,30 @@ services:
     restart: on-failure
     networks:
       - procure-net
-  adminer:
-    image: adminer
-    container_name: database-ui
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d procure_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name:  database-ui
     environment:
       PGADMIN_DEFAULT_EMAIL: procure@example.com
       PGADMIN_DEFAULT_PASSWORD: procure
     ports:
-      - "7070:8080"
-    restart: on-failure
+      - "7070:80"
+    restart: always
     volumes:
-      - adminer_data:/var/lib/adminer
+      - pgadmin_data:/var/lib/pgadmin
     networks:
       - procure-net
     profiles:
       - debug
+
 volumes:
-  adminer_data:
   postgres_data:
+  pgadmin_data:
 networks:
   procure-net:
     driver: bridge

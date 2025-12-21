@@ -1,5 +1,6 @@
 package org.commitlink.procure.models;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 @Data
 @Builder
@@ -37,7 +39,11 @@ public class User {
 
   private String role;
   private String password;
+
+  @Type(JsonType.class)
+  @Column(columnDefinition = "jsonb")
   private Set<String> permissions;
+
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

@@ -7,6 +7,7 @@ import static org.commitlink.procure.utils.UserMapper.getUserLoginEntityResponse
 import io.jsonwebtoken.JwtException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.commitlink.procure.dto.UserLoginEntityResponse;
 import org.commitlink.procure.dto.UserLoginRequest;
 import org.commitlink.procure.exceptions.InvalidToken;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService implements IAuthService {
 
   private final ITokenRepository tokenRepository;
@@ -30,7 +32,6 @@ public class AuthService implements IAuthService {
   @Override
   public UserLoginEntityResponse userLogin(UserLoginRequest userLoginRequest) {
     AuthUser authUser = userDetailService.loadUserByUsername(userLoginRequest.email());
-
     Token token = tokenRepository.save(
       Token.builder().accessToken(jwtService.generateToken(authUser)).refreshToken(jwtService.generateRefreshToken(authUser)).build()
     );

@@ -18,7 +18,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
   @Override
   public AuthUser loadUserByUsername(String username) throws UsernameNotFoundException {
-    var user = userRepository.findByEmail(username);
-    return user.map(AuthUser::getUser).orElseThrow(() -> new InvalidToken(INVALID_TOKEN));
+    var user = userRepository.findByEmail(username).orElseThrow(() -> new InvalidToken(INVALID_TOKEN));
+    return AuthUser.getUser(user);
   }
 }

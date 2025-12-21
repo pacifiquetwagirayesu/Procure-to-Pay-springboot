@@ -2,30 +2,57 @@ spring:
   application:
     name: Procure-to-Pay
     version: 1.0
-  config:
-    activate:
-      on-profile: dev
-
   datasource:
-    driver-class-name: org.postgresql.Driver
     url: ${DATABASE_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
+    hibernate:
+      ddl-auto: create
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: update
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /api-docs
+  flyway:
+    enabled: false
+logging:
+  level:
+    root: info
+    web: error
+    com.pacifique.security.review.controller: debug
 
 security:
   jwt:
+    secret-key: ${SECURITY_JWT_SECRET-KEY}
     expiration: 86400000
-    secret-key: ${SECURITY_JWT_SECRET_KEY}
     refresh-token:
       expiration: 604800000
-    super-admin: ${SECURITY_JWT_SUPER_ADMIN}
+    super-admin: ${SECURITY_JWT_SUPER-ADMIN}
+
+springdoc:
+  swagger-ui:
+    path: /api-docs
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: ${DOCKER_DATABASE_URL}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+logging:
+  level:
+    root: info
+    org.commitlink.procure.services: debug
+    org.commitlink.procure.controller: debug
