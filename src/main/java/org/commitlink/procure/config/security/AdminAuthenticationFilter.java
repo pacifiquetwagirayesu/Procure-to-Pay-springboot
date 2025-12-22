@@ -2,6 +2,7 @@ package org.commitlink.procure.config.security;
 
 import static org.commitlink.procure.utils.Constants.ADMIN_EMAIL;
 import static org.commitlink.procure.utils.Constants.PASSWORD_ADMIN;
+import static org.commitlink.procure.utils.Constants.PREFIX;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,14 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.commitlink.procure.models.AuthUser;
 import org.commitlink.procure.models.Role;
+import org.commitlink.procure.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
@@ -38,15 +39,19 @@ public class AdminAuthenticationFilter extends OncePerRequestFilter {
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header != null && header.substring(7).equals(adminAuthKey)) {
       InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-      UserDetails admin = User
-        .builder()
-        .username(ADMIN_EMAIL)
-        .roles(Role.ADMIN.name())
-        .password(passwordEncoder.encode(PASSWORD_ADMIN))
-        .build();
+      var admin = AuthUser.getUser(
+        User
+          .builder()
+          .id(0L)
+          .email(ADMIN_EMAIL)
+          .role(Role.ADMIN.name())
+          .password(passwordEncoder.encode(PASSWORD_ADMIN))
+          .permissions(Role.ADMIN.getPermissions())
+          .build()
+      );
       manager.createUser(admin);
 
-      var auth = new UsernamePasswordAuthenticationToken(admin, null, Set.of(new SimpleGrantedAuthority(Role.ADMIN.name())));
+      var auth = new UsernamePasswordAuthenticationToken(admin, null, Set.of(new SimpleGrantedAuthority(PREFIX + Role.ADMIN.name())));
       SecurityContextHolder.getContext().setAuthentication(auth);
     }
     filterChain.doFilter(request, response);

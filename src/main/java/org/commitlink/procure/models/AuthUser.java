@@ -42,4 +42,35 @@ public class AuthUser implements UserDetails {
       user.getUpdatedAt()
     );
   }
+
+  @Override
+  public String toString() {
+    return (
+      "AuthUser{" +
+      "id=" +
+      id +
+      ", username='" +
+      username +
+      '\'' +
+      ", firstName='" +
+      firstName +
+      '\'' +
+      ", lastName='" +
+      lastName +
+      '\'' +
+      ", password='" +
+      password +
+      '\'' +
+      ", role='" +
+      role +
+      '\'' +
+      ", permissions=" +
+      permissions +
+      ", createdAt=" +
+      createdAt +
+      ", updatedAt=" +
+      updatedAt +
+      '}'
+    );
+  }
 }

@@ -2,6 +2,7 @@ package org.commitlink.procure.config.security;
 
 import static org.commitlink.procure.utils.Constants.BEARER_KEY;
 import static org.commitlink.procure.utils.Constants.EXEMPT_FOR_AUTH_FILTER;
+import static org.commitlink.procure.utils.Constants.PREFIX;
 import static org.commitlink.procure.utils.HttpUtil.authenticationErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.commitlink.procure.models.AuthUser;
 import org.commitlink.procure.services.IJwtService;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -54,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
         authUser,
         null,
-        authUser.getAuthorities()
+        Set.of(new SimpleGrantedAuthority(PREFIX + authUser.getRole()))
       );
 
       SecurityContextHolder.getContext().setAuthentication(authenticationToken);
