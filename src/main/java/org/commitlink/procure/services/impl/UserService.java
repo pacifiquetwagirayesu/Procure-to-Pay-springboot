@@ -50,6 +50,7 @@ public class UserService implements IUserService {
   }
 
   @Override
+  @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
   public UserListPagination getUserList(int page, int size) {
     int pageNumber = Math.max(0, (page - 1));
     PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "firstName"));
@@ -68,10 +69,11 @@ public class UserService implements IUserService {
   @Override
   @PreAuthorize("hasRole('ADMIN')")
   public void deleteUserById(long id) {
-        userRepository.deleteById(id);
+    userRepository.deleteById(id);
   }
 
   @Override
+  @PreAuthorize("#id == authentication.principal.id")
   public UserEntityResponse getUserById(long id) {
     User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE.formatted(id)));
     return mapUser.apply(user);
