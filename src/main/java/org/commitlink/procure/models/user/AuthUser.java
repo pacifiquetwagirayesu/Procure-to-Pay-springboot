@@ -1,4 +1,4 @@
-package org.commitlink.procure.models;
+package org.commitlink.procure.models.user;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package org.commitlink.procure.controller;
+package org.commitlink.procure.controller.user;
 
 import static org.commitlink.procure.utils.Constants.ID;
 

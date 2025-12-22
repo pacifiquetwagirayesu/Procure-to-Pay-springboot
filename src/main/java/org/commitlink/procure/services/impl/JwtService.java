@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import lombok.Getter;
-import org.commitlink.procure.models.AuthUser;
+import org.commitlink.procure.models.user.AuthUser;
 import org.commitlink.procure.services.IJwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

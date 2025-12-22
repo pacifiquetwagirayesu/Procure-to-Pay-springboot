@@ -1,4 +1,4 @@
-package org.commitlink.procure.controller;
+package org.commitlink.procure.controller.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

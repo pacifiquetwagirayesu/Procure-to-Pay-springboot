@@ -1,7 +1,7 @@
 package org.commitlink.procure.services;
 
 import io.jsonwebtoken.JwtException;
-import org.commitlink.procure.models.AuthUser;
+import org.commitlink.procure.models.user.AuthUser;
 
 public interface IJwtService {
   String generateToken(AuthUser user);

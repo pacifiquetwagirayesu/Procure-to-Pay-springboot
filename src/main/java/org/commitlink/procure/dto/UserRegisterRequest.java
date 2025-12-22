@@ -1,9 +1,9 @@
 package org.commitlink.procure.dto;
 
-import static org.commitlink.procure.models.Role.APPROVER_LEVEL_1;
-import static org.commitlink.procure.models.Role.APPROVER_LEVEL_2;
-import static org.commitlink.procure.models.Role.FINANCE;
-import static org.commitlink.procure.models.Role.STAFF;
+import static org.commitlink.procure.models.user.Role.APPROVER_LEVEL_1;
+import static org.commitlink.procure.models.user.Role.APPROVER_LEVEL_2;
+import static org.commitlink.procure.models.user.Role.FINANCE;
+import static org.commitlink.procure.models.user.Role.STAFF;
 import static org.commitlink.procure.utils.Constants.EMAIL_REQUIRED;
 import static org.commitlink.procure.utils.Constants.FIRSTNAME_REQUIRED;
 import static org.commitlink.procure.utils.Constants.INVALID_EMAIL;

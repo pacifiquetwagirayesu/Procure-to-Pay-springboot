@@ -1,4 +1,4 @@
-package org.commitlink.procure.models;
+package org.commitlink.procure.models.user;
 
 import static org.commitlink.procure.utils.Constants.APPROVE_ONE;
 import static org.commitlink.procure.utils.Constants.APPROVE_TWO;

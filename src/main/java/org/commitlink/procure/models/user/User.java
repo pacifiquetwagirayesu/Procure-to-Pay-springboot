@@ -1,4 +1,4 @@
-package org.commitlink.procure.models;
+package org.commitlink.procure.models.user;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
