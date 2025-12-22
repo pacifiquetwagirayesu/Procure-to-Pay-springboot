@@ -40,6 +40,7 @@ public class Constants {
   // ROLE AND PERMISSION
   public static final String READ = "read";
   public static final String CREATE = "create";
+  public static final String DELETE = "delete";
   public static final String UPLOAD = "upload";
   public static final String APPROVE_ONE = "approve_one";
   public static final String APPROVE_TWO = "approve_two";
@@ -48,6 +49,10 @@ public class Constants {
   public static final String USER_NOT_FOUND_MESSAGE = "user with id: '%s' not found";
   public static final String ROLE = "role";
   public static final String PERMISSIONS = "permissions";
+
+  // USER
+  public static final String ADMIN_EMAIL = "admin@commitlink.org";
+  public static final String PASSWORD_ADMIN = "admincommitlink";
 
   // SWAGGER
   public static final String SWAGGER_URL = "/swagger-ui/index.html";

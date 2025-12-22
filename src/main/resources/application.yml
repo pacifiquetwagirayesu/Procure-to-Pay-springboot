@@ -9,7 +9,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   flyway:
@@ -26,7 +26,7 @@ security:
     expiration: 86400000
     refresh-token:
       expiration: 604800000
-    super-admin: ${SECURITY_JWT_SUPER-ADMIN}
+    admin: ${SECURITY_JWT_SUPER-ADMIN}
 
 springdoc:
   swagger-ui:

@@ -16,6 +16,7 @@ import org.commitlink.procure.services.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,12 @@ public class UserService implements IUserService {
       pageContent.hasPrevious(),
       userList
     );
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public void deleteUserById(long id) {
+        userRepository.deleteById(id);
   }
 
   @Override
