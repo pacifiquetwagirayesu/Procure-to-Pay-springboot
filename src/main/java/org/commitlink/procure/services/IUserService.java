@@ -10,4 +10,6 @@ public interface IUserService {
   UserEntityResponse getUserById(long id);
 
   UserListPagination getUserList(int page, int size);
+
+  void deleteUserById(long id);
 }

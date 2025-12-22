@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter authenticationFilter;
+  private final AdminAuthenticationFilter adminAuthenticationFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,12 +31,14 @@ public class SecurityConfig {
       authorize.requestMatchers(WHITE_LIST_URL).permitAll();
       authorize.requestMatchers(HttpMethod.POST, USER_URLS).permitAll();
       authorize.requestMatchers(HttpMethod.GET, USER_URLS).authenticated();
+      authorize.requestMatchers(HttpMethod.DELETE, USER_URLS).authenticated();
       authorize.requestMatchers(AUTH_URL).permitAll();
       authorize.anyRequest().denyAll();
     });
 
     http.csrf(AbstractHttpConfigurer::disable);
     http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterAt(adminAuthenticationFilter, JwtAuthenticationFilter.class);
     http.exceptionHandling(ex ->
       ex.authenticationEntryPoint(
         (

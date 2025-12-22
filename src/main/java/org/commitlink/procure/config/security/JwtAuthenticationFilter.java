@@ -16,6 +16,7 @@ import org.commitlink.procure.models.AuthUser;
 import org.commitlink.procure.services.IJwtService;
 import org.commitlink.procure.services.impl.UserDetailServiceImpl;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,14 +31,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final IJwtService jwtService;
   private final UserDetailServiceImpl userDetailService;
 
+  @Value("${security.jwt.admin}")
+  private String adminAuthKey;
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
     throws ServletException, IOException {
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-    if (header != null && header.contains(BEARER_KEY)) {
+    if (header != null && header.contains(BEARER_KEY) && !header.contains(adminAuthKey)) {
       String jwt = header.substring(7);
-
       try {
         jwtService.isTokenValid(jwt);
       } catch (JwtException ex) {
@@ -62,6 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-    return EXEMPT_FOR_AUTH_FILTER.contains(request.getServletPath());
+    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    return (EXEMPT_FOR_AUTH_FILTER.contains(request.getServletPath()) || (header != null && header.contains(adminAuthKey)));
   }
 }
