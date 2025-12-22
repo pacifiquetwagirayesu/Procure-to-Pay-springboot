@@ -5,9 +5,9 @@ import static org.commitlink.procure.utils.UserMapper.mapUser;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import org.commitlink.procure.dto.UserEntityResponse;
-import org.commitlink.procure.dto.UserListPagination;
-import org.commitlink.procure.dto.UserRegisterRequest;
+import org.commitlink.procure.dto.user.UserEntityResponse;
+import org.commitlink.procure.dto.user.UserListPagination;
+import org.commitlink.procure.dto.user.UserRegisterRequest;
 import org.commitlink.procure.exceptions.UserNotFoundException;
 import org.commitlink.procure.models.user.Role;
 import org.commitlink.procure.models.user.User;

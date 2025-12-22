@@ -1,4 +1,4 @@
-package org.commitlink.procure.dto;
+package org.commitlink.procure.dto.user;
 
 import static org.commitlink.procure.models.user.Role.APPROVER_LEVEL_1;
 import static org.commitlink.procure.models.user.Role.APPROVER_LEVEL_2;

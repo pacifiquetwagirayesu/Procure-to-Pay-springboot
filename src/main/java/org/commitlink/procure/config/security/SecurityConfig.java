@@ -1,6 +1,7 @@
 package org.commitlink.procure.config.security;
 
 import static org.commitlink.procure.utils.Constants.AUTH_URL;
+import static org.commitlink.procure.utils.Constants.REQUEST_PURCHASE_URL;
 import static org.commitlink.procure.utils.Constants.USER_URLS;
 import static org.commitlink.procure.utils.Constants.WHITE_LIST_URL;
 import static org.commitlink.procure.utils.HttpUtil.authenticationErrorMessage;
@@ -34,6 +35,7 @@ public class SecurityConfig {
       authorize.requestMatchers(HttpMethod.POST, USER_URLS).permitAll();
       authorize.requestMatchers(HttpMethod.GET, USER_URLS).authenticated();
       authorize.requestMatchers(HttpMethod.DELETE, USER_URLS).authenticated();
+      authorize.requestMatchers(REQUEST_PURCHASE_URL).authenticated();
       authorize.requestMatchers(AUTH_URL).permitAll();
       authorize.anyRequest().denyAll();
     });

@@ -5,9 +5,9 @@ import static org.commitlink.procure.utils.Constants.REFRESH_TOKEN;
 
 import java.util.Map;
 import java.util.function.Function;
-import org.commitlink.procure.dto.AuthUserResponseEntity;
-import org.commitlink.procure.dto.UserEntityResponse;
-import org.commitlink.procure.dto.UserLoginEntityResponse;
+import org.commitlink.procure.dto.user.AuthUserResponseEntity;
+import org.commitlink.procure.dto.user.UserEntityResponse;
+import org.commitlink.procure.dto.user.UserLoginEntityResponse;
 import org.commitlink.procure.models.user.AuthUser;
 import org.commitlink.procure.models.user.Token;
 import org.commitlink.procure.models.user.User;

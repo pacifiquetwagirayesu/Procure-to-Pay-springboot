@@ -1,4 +1,4 @@
-package org.commitlink.procure.dto;
+package org.commitlink.procure.dto.user;
 
 public record UserListPagination(
   long totalElement,
