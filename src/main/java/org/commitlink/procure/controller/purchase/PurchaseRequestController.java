@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/purchase-request")
+@RequestMapping("/api/v1/request")
 @Tag(name = "Purchase Request Endpoints")
 @Slf4j
 public class PurchaseRequestController {
@@ -34,8 +35,8 @@ public class PurchaseRequestController {
     @Parameter(
       description = "Purchase request JSON data",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PurchaseRequestDTO.class))
-    ) @RequestPart PurchaseRequestDTO purchaseRequest,
-    @RequestPart(required = false) MultipartFile proforma
+    ) @RequestPart @Valid PurchaseRequestDTO purchaseRequest,
+    @RequestPart MultipartFile proforma
   ) {
     return purchaseRequestService.createPurchaseRequest(purchaseRequest, proforma);
   }

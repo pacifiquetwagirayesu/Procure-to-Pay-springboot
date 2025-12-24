@@ -5,10 +5,14 @@ import static org.commitlink.procure.utils.Constants.PURCHASE_REQUEST_NOT_FOUND;
 import static org.commitlink.procure.utils.Constants.UPLOAD_ERROR;
 import static org.commitlink.procure.utils.Constants.URL;
 import static org.commitlink.procure.utils.Constants.USER_NOT_FOUND;
+import static org.commitlink.procure.utils.PurchaseRequestUtil.calculateTotalAmount;
 import static org.commitlink.procure.utils.PurchaseRequestUtil.mapRequestItem;
 import static org.commitlink.procure.utils.PurchaseRequestUtil.purchaseRequestResponseMapper;
 
 import com.cloudinary.Cloudinary;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
@@ -50,7 +54,7 @@ public class PurchaseRequestService implements IPurchaseRequestService {
       .builder()
       .title(purchaseRequest.title())
       .description(purchaseRequest.description())
-      .amount(purchaseRequest.amount())
+      .amount(purchaseRequest.totalAmount().setScale(2, RoundingMode.HALF_UP))
       .status(Status.PENDING)
       .items(purchaseRequest.items().stream().map(item -> mapRequestItem.apply(item)).toList())
       .createdBy(user)
@@ -69,6 +73,10 @@ public class PurchaseRequestService implements IPurchaseRequestService {
         log.info(UPLOAD_ERROR, e.getMessage());
       }
     }
+
+    BigDecimal totalAmount = calculateTotalAmount.apply(request.getItems());
+    if (!Objects.equals(totalAmount, BigDecimal.ZERO)) request.setAmount(totalAmount);
+
     return requestRepository.save(request).getId();
   }
 
@@ -77,6 +85,7 @@ public class PurchaseRequestService implements IPurchaseRequestService {
     PurchaseRequest purchaseRequest = requestRepository
       .findById(id)
       .orElseThrow(() -> new PurchaseRequestNotFound(PURCHASE_REQUEST_NOT_FOUND));
+    log.info("res: {}", purchaseRequest);
     return purchaseRequestResponseMapper.apply(purchaseRequest);
   }
 }

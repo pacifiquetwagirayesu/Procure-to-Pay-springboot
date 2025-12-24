@@ -26,10 +26,11 @@ public class RequestItem {
   @SequenceGenerator(allocationSize = 1, name = "item_seq_id", sequenceName = "item_seq_id")
   private Long id;
 
-  private String name;
+  private String itemName;
   private String description;
   private int quantity;
   private BigDecimal unitPrice;
+  private BigDecimal totalPrice;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 

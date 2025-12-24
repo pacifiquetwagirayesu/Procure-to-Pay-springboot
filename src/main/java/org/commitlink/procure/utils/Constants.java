@@ -19,24 +19,15 @@ public class Constants {
     "/swagger-ui.html",
     "/api-docs",
     "/swagger-ui/index.html",
+    "/error",
     "/",
   };
 
-  public static final String INVALID_TOKEN_HTTP_MESSAGE =
-    """
-                {
-                "message": "%s",
-                "status": "%s",
-                "path": "%s",
-                "timestamp": "%s"
-                }
-
-                """;
   public static final List<String> EXEMPT_FOR_AUTH_FILTER = List.of("/", "/swagger-ui/index.html");
 
   public static final String USER_URLS = "/api/v1/users/**";
   public static final String AUTH_URL = "/api/v1/auth/**";
-  public static final String REQUEST_PURCHASE_URL = "/api/v1/purchase-request/**";
+  public static final String REQUEST_PURCHASE_URL = "/api/v1/request/**";
   public static final String URL = "url";
 
   // ROLE AND PERMISSION
@@ -78,7 +69,6 @@ public class Constants {
   public static final String ROLE_REQUIRED = "First name is required";
   public static final String INVALID_TOKEN = "Invalid Token";
   public static final String MALFORMED_TOKEN = "Malformed Token";
-  public static final String AUTHENTICATION_REQUIRED = "Authentication required";
   public static final String BEARER_KEY = "Bearer ";
 
   // CLOUDINARY

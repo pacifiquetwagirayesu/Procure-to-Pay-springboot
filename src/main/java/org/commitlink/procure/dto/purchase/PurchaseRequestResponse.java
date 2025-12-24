@@ -1,5 +1,6 @@
 package org.commitlink.procure.dto.purchase;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ public record PurchaseRequestResponse(
   Long id,
   String title,
   String description,
-  BigDecimal amount,
+  @JsonProperty("total_amount") @JsonFormat(shape = JsonFormat.Shape.STRING) BigDecimal amount,
   Status status,
   List<RequestItemResponse> items,
   UserPurchaseRequest createdBy,
