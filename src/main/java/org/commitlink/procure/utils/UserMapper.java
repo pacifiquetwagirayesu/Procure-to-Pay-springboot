@@ -49,6 +49,6 @@ public class UserMapper {
 
   public static Function<User, UserPurchaseRequest> userPurchaseRequest = user -> {
     if (user == null) return null;
-    return new UserPurchaseRequest(user.getId(), user.getEmail());
+    return new UserPurchaseRequest(user.getId(), user.getRole(), user.getEmail());
   };
 }

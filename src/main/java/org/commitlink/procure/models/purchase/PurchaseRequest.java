@@ -57,9 +57,9 @@ public class PurchaseRequest {
   @JoinColumn(name = "created_by_id")
   private User createdBy;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "approved_by_id")
-  private User approvedBy;
+  private List<User> approvedBy;
 
   private String proforma;
 

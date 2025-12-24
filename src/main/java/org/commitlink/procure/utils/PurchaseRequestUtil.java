@@ -26,7 +26,7 @@ public class PurchaseRequestUtil {
       res.getStatus(),
       res.getItems().stream().map(item -> requestItemResponseMapper.apply(item)).toList(),
       userPurchaseRequest.apply(res.getCreatedBy()),
-      userPurchaseRequest.apply(res.getApprovedBy()),
+      res.getApprovedBy().stream().map(approver -> userPurchaseRequest.apply(approver)).toList(),
       res.getProforma(),
       res.getProformaMetadata(),
       res.getPurchaseOrder(),

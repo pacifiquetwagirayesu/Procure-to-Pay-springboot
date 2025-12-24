@@ -69,8 +69,8 @@ public class PurchaseRequestService implements IPurchaseRequestService {
         log.info(UPLOAD_ERROR, e.getMessage());
       }
     }
-
-    return requestRepository.save(request).getId();
+//    requestRepository.save(request).getId();
+    return 1;
   }
 
   @Override
