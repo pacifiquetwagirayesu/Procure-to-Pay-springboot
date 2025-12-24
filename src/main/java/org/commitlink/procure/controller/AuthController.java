@@ -1,5 +1,6 @@
-package org.commitlink.procure.controller.user;
+package org.commitlink.procure.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,14 @@ public class AuthController {
   private final IAuthService authService;
 
   @PostMapping("/login")
-  @ResponseStatus(HttpStatus.OK)
+  @Operation(summary = "Login user request")
   public UserLoginEntityResponse userLogin(@Valid @RequestBody UserLoginRequest userLoginRequest) {
     return authService.userLogin(userLoginRequest);
   }
 
   @PostMapping("/refresh-token")
   @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Refresh token request")
   public UserLoginEntityResponse userRefreshToken(@Valid @RequestParam("refresh-token") String refreshToken) {
     return authService.userRefreshToken(refreshToken);
   }

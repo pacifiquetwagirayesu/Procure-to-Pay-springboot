@@ -6,7 +6,7 @@ import static org.commitlink.procure.utils.UserMapper.mapUser;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import org.commitlink.procure.dto.user.UserEntityResponse;
-import org.commitlink.procure.dto.user.UserListPagination;
+import org.commitlink.procure.dto.user.UserListPaginationResponse;
 import org.commitlink.procure.dto.user.UserRegisterRequest;
 import org.commitlink.procure.exceptions.UserNotFoundException;
 import org.commitlink.procure.models.user.Role;
@@ -51,13 +51,13 @@ public class UserService implements IUserService {
 
   @Override
   @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN')")
-  public UserListPagination getUserList(int page, int size) {
+  public UserListPaginationResponse getUserList(int page, int size) {
     int pageNumber = Math.max(0, (page - 1));
     PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.ASC, "firstName"));
     Page<User> pageContent = userRepository.findAll(pageRequest);
     Iterable<UserEntityResponse> userList = pageContent.getContent().stream().map(user -> mapUser.apply(user)).toList();
 
-    return new UserListPagination(
+    return new UserListPaginationResponse(
       pageContent.getTotalElements(),
       pageContent.getTotalPages(),
       pageContent.hasNext(),
