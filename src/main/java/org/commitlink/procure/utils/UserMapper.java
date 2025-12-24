@@ -35,7 +35,6 @@ public class UserMapper {
       authUser.getLastName(),
       authUser.getRole(),
       authUser.getPermissions(),
-      authUser.getPassword(),
       authUser.getCreatedAt(),
       authUser.getUpdatedAt()
     );

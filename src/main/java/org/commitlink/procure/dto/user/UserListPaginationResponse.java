@@ -1,6 +1,6 @@
 package org.commitlink.procure.dto.user;
 
-public record UserListPagination(
+public record UserListPaginationResponse(
   long totalElement,
   int totalPages,
   boolean hasNext,

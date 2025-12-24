@@ -27,7 +27,7 @@ public class Constants {
 
   public static final String USER_URLS = "/api/v1/users/**";
   public static final String AUTH_URL = "/api/v1/auth/**";
-  public static final String REQUEST_PURCHASE_URL = "/api/v1/request/**";
+  public static final String REQUEST_PURCHASE_URL = "/api/v1/requests/**";
   public static final String URL = "url";
 
   // ROLE AND PERMISSION

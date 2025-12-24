@@ -13,6 +13,5 @@ public record RequestItemDTO(
   @JsonProperty("unit_price")
   @NotNull(message = "unit price is required")
   @DecimalMin(value = "0.01", message = "unit price must greater than 0")
-  BigDecimal unitPrice,
-  @JsonProperty("total_price") BigDecimal totalPrice
+  BigDecimal unitPrice
 ) {}
