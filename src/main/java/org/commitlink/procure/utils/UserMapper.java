@@ -5,6 +5,7 @@ import static org.commitlink.procure.utils.Constants.REFRESH_TOKEN;
 
 import java.util.Map;
 import java.util.function.Function;
+import org.commitlink.procure.dto.purchase.UserPurchaseRequest;
 import org.commitlink.procure.dto.user.AuthUserResponseEntity;
 import org.commitlink.procure.dto.user.UserEntityResponse;
 import org.commitlink.procure.dto.user.UserLoginEntityResponse;
@@ -45,4 +46,9 @@ public class UserMapper {
       Map.of(ACCESS_TOKEN, token.getAccessToken(), REFRESH_TOKEN, token.getRefreshToken())
     );
   }
+
+  public static Function<User, UserPurchaseRequest> userPurchaseRequest = user -> {
+    if (user == null) return null;
+    return new UserPurchaseRequest(user.getId(), user.getEmail());
+  };
 }

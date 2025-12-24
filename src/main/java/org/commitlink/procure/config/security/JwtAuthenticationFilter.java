@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       try {
         jwtService.isTokenValid(jwt);
       } catch (JwtException ex) {
-        authenticationErrorMessage(request, response, HttpStatus.BAD_REQUEST, ex, new ObjectMapper());
+        authenticationErrorMessage(request, response, HttpStatus.BAD_REQUEST.value(), ex, new ObjectMapper());
         return;
       }
 

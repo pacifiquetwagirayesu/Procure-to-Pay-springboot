@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.commitlink.procure.models.user.User;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -29,6 +30,7 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Data
 public class PurchaseRequest {
 
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_seq_id")
@@ -57,7 +59,7 @@ public class PurchaseRequest {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "approved_by_id")
-  private User approvedById;
+  private User approvedBy;
 
   private String proforma;
 

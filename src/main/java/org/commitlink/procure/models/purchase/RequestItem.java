@@ -11,12 +11,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 public class RequestItem {
 
   @Id
@@ -24,11 +26,10 @@ public class RequestItem {
   @SequenceGenerator(allocationSize = 1, name = "item_seq_id", sequenceName = "item_seq_id")
   private Long id;
 
-  private String itemName;
+  private String name;
   private String description;
   private int quantity;
   private BigDecimal unitPrice;
-  private BigDecimal totalPrice;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 

@@ -21,13 +21,13 @@ public class HttpUtil {
   public static void authenticationErrorMessage(
     HttpServletRequest request,
     HttpServletResponse response,
-    HttpStatus httpStatus,
+    int status,
     Exception authException,
     ObjectMapper objectMapper
   ) throws IOException {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put(MESSAGE, authException.getMessage());
-    body.put(STATUS, httpStatus.value());
+    body.put(STATUS, status);
     body.put(PATH, request.getServletPath());
     body.put(TIMESTAMP, LocalDateTime.now().toString());
 
