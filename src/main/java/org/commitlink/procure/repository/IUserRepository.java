@@ -1,7 +1,7 @@
 package org.commitlink.procure.repository;
 
 import java.util.Optional;
-import org.commitlink.procure.models.User;
+import org.commitlink.procure.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.commitlink.procure.models.AuthUser;
+import org.commitlink.procure.models.user.AuthUser;
 import org.commitlink.procure.services.IJwtService;
 import org.commitlink.procure.services.impl.UserDetailServiceImpl;
 import org.jspecify.annotations.NonNull;
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       try {
         jwtService.isTokenValid(jwt);
       } catch (JwtException ex) {
-        authenticationErrorMessage(request, response, HttpStatus.BAD_REQUEST, ex, new ObjectMapper());
+        authenticationErrorMessage(request, response, HttpStatus.BAD_REQUEST.value(), ex, new ObjectMapper());
         return;
       }
 

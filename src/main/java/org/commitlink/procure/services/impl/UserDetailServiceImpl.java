@@ -4,7 +4,7 @@ import static org.commitlink.procure.utils.Constants.INVALID_TOKEN;
 
 import lombok.RequiredArgsConstructor;
 import org.commitlink.procure.exceptions.InvalidToken;
-import org.commitlink.procure.models.AuthUser;
+import org.commitlink.procure.models.user.AuthUser;
 import org.commitlink.procure.repository.IUserRepository;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

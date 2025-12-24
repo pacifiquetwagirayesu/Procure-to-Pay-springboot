@@ -1,6 +1,7 @@
 package org.commitlink.procure.config.security;
 
 import static org.commitlink.procure.utils.Constants.AUTH_URL;
+import static org.commitlink.procure.utils.Constants.REQUEST_PURCHASE_URL;
 import static org.commitlink.procure.utils.Constants.USER_URLS;
 import static org.commitlink.procure.utils.Constants.WHITE_LIST_URL;
 import static org.commitlink.procure.utils.HttpUtil.authenticationErrorMessage;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +34,7 @@ public class SecurityConfig {
       authorize.requestMatchers(HttpMethod.POST, USER_URLS).permitAll();
       authorize.requestMatchers(HttpMethod.GET, USER_URLS).authenticated();
       authorize.requestMatchers(HttpMethod.DELETE, USER_URLS).authenticated();
+      authorize.requestMatchers(REQUEST_PURCHASE_URL).authenticated();
       authorize.requestMatchers(AUTH_URL).permitAll();
       authorize.anyRequest().denyAll();
     });
@@ -45,7 +46,7 @@ public class SecurityConfig {
       ex.authenticationEntryPoint(
         (
           (request, response, authException) ->
-            authenticationErrorMessage(request, response, HttpStatus.UNAUTHORIZED, authException, new ObjectMapper())
+            authenticationErrorMessage(request, response, response.getStatus(), authException, new ObjectMapper())
         )
       )
     );

@@ -19,23 +19,16 @@ public class Constants {
     "/swagger-ui.html",
     "/api-docs",
     "/swagger-ui/index.html",
+    "/error",
     "/",
   };
 
-  public static final String INVALID_TOKEN_HTTP_MESSAGE =
-    """
-                {
-                "message": "%s",
-                "status": "%s",
-                "path": "%s",
-                "timestamp": "%s"
-                }
-
-                """;
   public static final List<String> EXEMPT_FOR_AUTH_FILTER = List.of("/", "/swagger-ui/index.html");
 
   public static final String USER_URLS = "/api/v1/users/**";
-  public static final String AUTH_URL = "/api/v1/auth/*";
+  public static final String AUTH_URL = "/api/v1/auth/**";
+  public static final String REQUEST_PURCHASE_URL = "/api/v1/request/**";
+  public static final String URL = "url";
 
   // ROLE AND PERMISSION
   public static final String READ = "read";
@@ -60,6 +53,7 @@ public class Constants {
   // API RESPONSE
   public static final String ID = "id";
   public static final String USER_NOT_FOUND = "User not found";
+  public static final String PURCHASE_REQUEST_NOT_FOUND = "Purchase request not found";
   public static final String ACCESS_TOKEN = "accessToken";
   public static final String REFRESH_TOKEN = "refreshToken";
   public static final String MESSAGE = "message";
@@ -75,6 +69,20 @@ public class Constants {
   public static final String ROLE_REQUIRED = "First name is required";
   public static final String INVALID_TOKEN = "Invalid Token";
   public static final String MALFORMED_TOKEN = "Malformed Token";
-  public static final String AUTHENTICATION_REQUIRED = "Authentication required";
   public static final String BEARER_KEY = "Bearer ";
+
+  // CLOUDINARY
+  public static final String CLOUDINARY_UPLOAD_FOLDER = "commitlink/purchase";
+  public static final String CLOUD_NAME = "cloud_name";
+  public static final String API_KEY = "api_key";
+  public static final String SECRET_KEY = "api_secret";
+  public static final String SECURE = "secure";
+  public static final String FOLDER = "folder";
+  public static final String USE_FILENAME = "use_filename";
+  public static final String UNIQUE_FILENAME = "unique_filename";
+  public static final String OVERWRITE = "overwrite";
+  public static final String PUBLIC_ID = "public_id";
+
+  // LOGS
+  public static final String UPLOAD_ERROR = "IError: {}";
 }

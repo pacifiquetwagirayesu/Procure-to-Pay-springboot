@@ -1,4 +1,4 @@
-package org.commitlink.procure.controller;
+package org.commitlink.procure.controller.user;
 
 import static org.commitlink.procure.utils.Constants.ID;
 
@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.commitlink.procure.dto.UserEntityResponse;
-import org.commitlink.procure.dto.UserListPagination;
-import org.commitlink.procure.dto.UserRegisterRequest;
+import org.commitlink.procure.dto.user.UserEntityResponse;
+import org.commitlink.procure.dto.user.UserListPagination;
+import org.commitlink.procure.dto.user.UserRegisterRequest;
 import org.commitlink.procure.services.IUserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

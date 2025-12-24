@@ -1,10 +1,10 @@
-package org.commitlink.procure.controller;
+package org.commitlink.procure.controller.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.commitlink.procure.dto.UserLoginEntityResponse;
-import org.commitlink.procure.dto.UserLoginRequest;
+import org.commitlink.procure.dto.user.UserLoginEntityResponse;
+import org.commitlink.procure.dto.user.UserLoginRequest;
 import org.commitlink.procure.services.IAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;

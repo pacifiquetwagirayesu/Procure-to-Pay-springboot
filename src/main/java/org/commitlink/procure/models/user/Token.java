@@ -1,4 +1,4 @@
-package org.commitlink.procure.models;
+package org.commitlink.procure.models.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
