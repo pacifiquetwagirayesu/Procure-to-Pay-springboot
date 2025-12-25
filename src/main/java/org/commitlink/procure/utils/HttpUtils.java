@@ -16,7 +16,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-public class HttpUtil {
+public class HttpUtils {
 
   public static void authenticationErrorMessage(
     HttpServletRequest request,

@@ -84,5 +84,5 @@ public class Constants {
   public static final String PUBLIC_ID = "public_id";
 
   // LOGS
-  public static final String UPLOAD_ERROR = "IError: {}";
+  public static final String ERROR = "Error: {}";
 }

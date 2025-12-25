@@ -54,6 +54,7 @@ dependencies {
 	implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.11.0")
 	implementation 'com.cloudinary:cloudinary-http44:1.38.0'
 	implementation 'com.cloudinary:cloudinary-taglib:1.38.0'
+	implementation("org.apache.pdfbox:pdfbox:3.0.6")
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
 	compileOnly 'org.projectlombok:lombok'

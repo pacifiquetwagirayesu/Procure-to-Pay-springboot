@@ -42,7 +42,7 @@ public class PurchaseRequestController {
       description = "Purchase request JSON data",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PurchaseRequestDTO.class))
     ) @RequestPart @Valid PurchaseRequestDTO purchaseRequest,
-    @RequestPart MultipartFile proforma
+    @RequestPart(required = false) MultipartFile proforma
   ) {
     return purchaseRequestService.createPurchaseRequest(purchaseRequest, proforma);
   }

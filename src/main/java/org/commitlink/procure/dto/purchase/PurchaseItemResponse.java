@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 
-public record RequestItemResponse(
+public record PurchaseItemResponse(
   Long id,
   String name,
   String description,

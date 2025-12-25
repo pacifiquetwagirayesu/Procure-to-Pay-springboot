@@ -51,7 +51,7 @@ public class PurchaseRequest {
   private Status status;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<RequestItem> items;
+  private List<PurchaseItem> items;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by_id")

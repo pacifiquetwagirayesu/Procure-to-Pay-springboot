@@ -1,19 +1,22 @@
 package org.commitlink.procure.services.impl;
 
-import static org.commitlink.procure.utils.CloudinaryUtil.uploadParams;
+import static org.commitlink.procure.utils.CloudinaryUtils.uploadParams;
+import static org.commitlink.procure.utils.Constants.ERROR;
 import static org.commitlink.procure.utils.Constants.PURCHASE_REQUEST_NOT_FOUND;
-import static org.commitlink.procure.utils.Constants.UPLOAD_ERROR;
 import static org.commitlink.procure.utils.Constants.URL;
 import static org.commitlink.procure.utils.Constants.USER_NOT_FOUND;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.calculateTotalAmount;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.mapRequestItem;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.purchaseRequestResponseMapper;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.calculateTotalAmount;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.getPurchaseItems;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.mapRequestItem;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.purchaseRequestResponseMapper;
 
 import com.cloudinary.Cloudinary;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
@@ -21,6 +24,7 @@ import org.commitlink.procure.dto.purchase.PurchaseRequestListPaginationResponse
 import org.commitlink.procure.dto.purchase.PurchaseRequestResponse;
 import org.commitlink.procure.exceptions.PurchaseRequestNotFound;
 import org.commitlink.procure.exceptions.UserNotFoundException;
+import org.commitlink.procure.models.purchase.PurchaseItem;
 import org.commitlink.procure.models.purchase.PurchaseRequest;
 import org.commitlink.procure.models.purchase.Status;
 import org.commitlink.procure.models.user.AuthUser;
@@ -28,6 +32,10 @@ import org.commitlink.procure.models.user.User;
 import org.commitlink.procure.repository.IPurchaseRequestRepository;
 import org.commitlink.procure.repository.IUserRepository;
 import org.commitlink.procure.services.IPurchaseRequestService;
+import org.commitlink.procure.utils.FileUtils;
+import org.commitlink.procure.utils.ProformaInvoiceUtils;
+import org.jspecify.annotations.Nullable;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -45,8 +53,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class PurchaseRequestService implements IPurchaseRequestService {
 
   private final Cloudinary cloudinary;
-  private final IPurchaseRequestRepository purchaseRequestRepository;
+  private final IPurchaseRequestRepository requestRepository;
   private final IUserRepository userRepository;
+  private final ChatClient chatClient;
+  private final ExecutorService executorService;
 
   @Override
   @PreAuthorize("hasRole('STAFF')")
@@ -61,36 +71,35 @@ public class PurchaseRequestService implements IPurchaseRequestService {
       .description(purchaseRequest.description())
       .amount(purchaseRequest.totalAmount().setScale(2, RoundingMode.HALF_UP))
       .status(Status.PENDING)
-      .items(purchaseRequest.items().stream().map(item -> mapRequestItem.apply(item)).toList())
+      .items(getPurchaseItems(purchaseRequest))
       .createdBy(user)
       .proforma(null)
       .build();
 
-    if (!proforma.isEmpty()) {
+    PurchaseRequest savedRequest = requestRepository.save(request);
+
+    if (proforma != null && !proforma.isEmpty()) {
       try {
-        String proformaUrl = cloudinary
-          .uploader()
-          .upload(proforma.getBytes(), uploadParams(proforma.getOriginalFilename()))
-          .get(URL)
-          .toString();
-        request.setProforma(proformaUrl);
+        Map upload = cloudinary.uploader().upload(proforma.getBytes(), uploadParams(proforma.getOriginalFilename()));
+        savedRequest.setProforma(upload.get(URL).toString());
+        String invoiceData = FileUtils.extractTextFromProforma(proforma);
+        ProformaInvoiceUtils.extractProformaMetadataAndSave(savedRequest, requestRepository, executorService, chatClient, invoiceData);
       } catch (Exception e) {
-        log.info(UPLOAD_ERROR, e.getMessage());
+        log.info(ERROR, e.getMessage());
       }
     }
 
-    BigDecimal totalAmount = calculateTotalAmount.apply(request.getItems());
-    if (!Objects.equals(totalAmount, BigDecimal.ZERO)) request.setAmount(totalAmount);
+    //    InvoiceGeneratorUtils.saveInvoiceToFile(savedRequest, "proforma/%s_%s.pdf".formatted(savedRequest.getCreatedBy().getFirstName(),savedRequest.getCreatedBy().getLastName()));
 
-    return purchaseRequestRepository.save(request).getId();
+    return savedRequest.getId();
   }
+
 
   @Override
   public PurchaseRequestResponse getPurchaseRequestById(long id) {
-    PurchaseRequest purchaseRequest = purchaseRequestRepository
+    PurchaseRequest purchaseRequest = requestRepository
       .findById(id)
       .orElseThrow(() -> new PurchaseRequestNotFound(PURCHASE_REQUEST_NOT_FOUND));
-    log.info("res: {}", purchaseRequest);
     return purchaseRequestResponseMapper.apply(purchaseRequest);
   }
 
@@ -99,7 +108,7 @@ public class PurchaseRequestService implements IPurchaseRequestService {
     int pageNumber = Math.max(0, (page - 1));
     PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.DESC, "createdAt"));
     AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    Page<PurchaseRequest> purchaseContent = purchaseRequestRepository.findByCreatedBy_Email(authUser.getUsername(), pageRequest);
+    Page<PurchaseRequest> purchaseContent = requestRepository.findByCreatedBy_Email(authUser.getUsername(), pageRequest);
 
     List<PurchaseRequestResponse> requestResponses = purchaseContent
       .getContent()
