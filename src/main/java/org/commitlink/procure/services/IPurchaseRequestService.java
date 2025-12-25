@@ -1,5 +1,6 @@
 package org.commitlink.procure.services;
 
+import java.util.Map;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
 import org.commitlink.procure.dto.purchase.PurchaseRequestListPaginationResponse;
 import org.commitlink.procure.dto.purchase.PurchaseRequestResponse;
@@ -11,4 +12,8 @@ public interface IPurchaseRequestService {
   PurchaseRequestResponse getPurchaseRequestById(long id);
 
   PurchaseRequestListPaginationResponse purchaseRequestList(int page, int size);
+
+  Map<String, String> approvePurchaseRequest(long id);
+
+  Map<String, String> rejectPurchaseRequest(long id);
 }

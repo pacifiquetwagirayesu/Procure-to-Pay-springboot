@@ -1,24 +1,36 @@
 package org.commitlink.procure.services.impl;
 
-import static org.commitlink.procure.utils.CloudinaryUtil.uploadParams;
+import static org.commitlink.procure.utils.CloudinaryUtils.uploadParams;
+import static org.commitlink.procure.utils.Constants.ERROR;
+import static org.commitlink.procure.utils.Constants.LEVEL_ONE_UPDATE_ERROR;
+import static org.commitlink.procure.utils.Constants.LEVEL_TWO_UPDATE_ERROR;
 import static org.commitlink.procure.utils.Constants.PURCHASE_REQUEST_NOT_FOUND;
-import static org.commitlink.procure.utils.Constants.UPLOAD_ERROR;
+import static org.commitlink.procure.utils.Constants.STATUS_CANNOT_CHANGE;
+import static org.commitlink.procure.utils.Constants.STATUS_UPDATE_SUCCESS;
+import static org.commitlink.procure.utils.Constants.SUCCESS;
 import static org.commitlink.procure.utils.Constants.URL;
 import static org.commitlink.procure.utils.Constants.USER_NOT_FOUND;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.calculateTotalAmount;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.mapRequestItem;
-import static org.commitlink.procure.utils.PurchaseRequestUtil.purchaseRequestResponseMapper;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.getPurchaseItems;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.purchaseRequestResponseMapper;
+import static org.commitlink.procure.utils.RoleUtils.canNotBeUpdated;
+import static org.commitlink.procure.utils.RoleUtils.getRoles;
+import static org.commitlink.procure.utils.RoleUtils.isApprover;
+import static org.commitlink.procure.utils.RoleUtils.isLevelOneApprover;
+import static org.commitlink.procure.utils.RoleUtils.isLevelTwoApprover;
+import static org.commitlink.procure.utils.RoleUtils.statusCanNotBeChanged;
 
 import com.cloudinary.Cloudinary;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
 import org.commitlink.procure.dto.purchase.PurchaseRequestListPaginationResponse;
 import org.commitlink.procure.dto.purchase.PurchaseRequestResponse;
+import org.commitlink.procure.exceptions.NotFoundException;
 import org.commitlink.procure.exceptions.PurchaseRequestNotFound;
 import org.commitlink.procure.exceptions.UserNotFoundException;
 import org.commitlink.procure.models.purchase.PurchaseRequest;
@@ -28,10 +40,14 @@ import org.commitlink.procure.models.user.User;
 import org.commitlink.procure.repository.IPurchaseRequestRepository;
 import org.commitlink.procure.repository.IUserRepository;
 import org.commitlink.procure.services.IPurchaseRequestService;
+import org.commitlink.procure.utils.FileUtils;
+import org.commitlink.procure.utils.ProformaInvoiceUtils;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -45,8 +61,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class PurchaseRequestService implements IPurchaseRequestService {
 
   private final Cloudinary cloudinary;
-  private final IPurchaseRequestRepository purchaseRequestRepository;
+  private final IPurchaseRequestRepository requestRepository;
   private final IUserRepository userRepository;
+  private final ChatClient chatClient;
+  private final ExecutorService executorService;
 
   @Override
   @PreAuthorize("hasRole('STAFF')")
@@ -61,36 +79,32 @@ public class PurchaseRequestService implements IPurchaseRequestService {
       .description(purchaseRequest.description())
       .amount(purchaseRequest.totalAmount().setScale(2, RoundingMode.HALF_UP))
       .status(Status.PENDING)
-      .items(purchaseRequest.items().stream().map(item -> mapRequestItem.apply(item)).toList())
+      .items(getPurchaseItems(purchaseRequest))
       .createdBy(user)
       .proforma(null)
       .build();
 
-    if (!proforma.isEmpty()) {
+    PurchaseRequest savedRequest = requestRepository.save(request);
+
+    if (proforma != null && !proforma.isEmpty()) {
       try {
-        String proformaUrl = cloudinary
-          .uploader()
-          .upload(proforma.getBytes(), uploadParams(proforma.getOriginalFilename()))
-          .get(URL)
-          .toString();
-        request.setProforma(proformaUrl);
+        Map upload = cloudinary.uploader().upload(proforma.getBytes(), uploadParams(proforma.getOriginalFilename()));
+        savedRequest.setProforma(upload.get(URL).toString());
+        String invoiceData = FileUtils.extractTextFromProforma(proforma);
+        ProformaInvoiceUtils.extractProformaMetadataAndSave(savedRequest, requestRepository, executorService, chatClient, invoiceData);
       } catch (Exception e) {
-        log.info(UPLOAD_ERROR, e.getMessage());
+        log.info(ERROR, e.getMessage());
       }
     }
 
-    BigDecimal totalAmount = calculateTotalAmount.apply(request.getItems());
-    if (!Objects.equals(totalAmount, BigDecimal.ZERO)) request.setAmount(totalAmount);
-
-    return purchaseRequestRepository.save(request).getId();
+    return savedRequest.getId();
   }
 
   @Override
   public PurchaseRequestResponse getPurchaseRequestById(long id) {
-    PurchaseRequest purchaseRequest = purchaseRequestRepository
+    PurchaseRequest purchaseRequest = requestRepository
       .findById(id)
       .orElseThrow(() -> new PurchaseRequestNotFound(PURCHASE_REQUEST_NOT_FOUND));
-    log.info("res: {}", purchaseRequest);
     return purchaseRequestResponseMapper.apply(purchaseRequest);
   }
 
@@ -99,7 +113,13 @@ public class PurchaseRequestService implements IPurchaseRequestService {
     int pageNumber = Math.max(0, (page - 1));
     PageRequest pageRequest = PageRequest.of(pageNumber, size, Sort.by(Sort.Direction.DESC, "createdAt"));
     AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    Page<PurchaseRequest> purchaseContent = purchaseRequestRepository.findByCreatedBy_Email(authUser.getUsername(), pageRequest);
+    Page<PurchaseRequest> purchaseContent;
+
+    if (isApprover(authUser)) {
+      purchaseContent = requestRepository.findByStatus(Status.PENDING, pageRequest);
+    } else {
+      purchaseContent = requestRepository.findByCreatedBy_Email(authUser.getUsername(), pageRequest);
+    }
 
     List<PurchaseRequestResponse> requestResponses = purchaseContent
       .getContent()
@@ -114,5 +134,62 @@ public class PurchaseRequestService implements IPurchaseRequestService {
       purchaseContent.hasPrevious(),
       requestResponses
     );
+  }
+
+  @Override
+  @PreAuthorize("hasRole('APPROVER_LEVEL_1') or hasRole('APPROVER_LEVEL_2')")
+  public Map<String, String> approvePurchaseRequest(long id) {
+    PurchaseRequest purchaseRequest = requestRepository.findById(id).orElseThrow(() -> new NotFoundException(PURCHASE_REQUEST_NOT_FOUND));
+    if (statusCanNotBeChanged(purchaseRequest)) return Map.of(SUCCESS, STATUS_CANNOT_CHANGE);
+
+    AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    User user = userRepository.findByEmail(authUser.getUsername()).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+    if (statusCanNotBeChanged(purchaseRequest)) return Map.of(SUCCESS, STATUS_CANNOT_CHANGE);
+
+    List<String> roles = getRoles(purchaseRequest);
+
+    if (isLevelOneApprover(roles, authUser)) {
+      purchaseRequest.getApprovedBy().add(user);
+      purchaseRequest.setStatus(Status.PENDING);
+    } else if (canNotBeUpdated(roles, authUser)) {
+      throw new AuthorizationDeniedException(LEVEL_TWO_UPDATE_ERROR);
+    } else if (isLevelTwoApprover(roles, authUser)) {
+      purchaseRequest.getApprovedBy().add(user);
+      purchaseRequest.setStatus(Status.APPROVED);
+      purchaseRequest.setApprovedAt(LocalDateTime.now());
+      //      generatePurchaseOrder(purchaseRequest, "proforma/%s_%s.pdf".formatted(purchaseRequest.getCreatedBy().getFirstName(),purchaseRequest.getCreatedBy().getLastName()));
+
+    } else {
+      throw new AuthorizationDeniedException(LEVEL_ONE_UPDATE_ERROR);
+    }
+
+    PurchaseRequest request = requestRepository.save(purchaseRequest);
+    return Map.of(SUCCESS, STATUS_UPDATE_SUCCESS.formatted(request.getTitle()));
+  }
+
+  @Override
+  @PreAuthorize("hasRole('APPROVER_LEVEL_1') or hasRole('APPROVER_LEVEL_2')")
+  public Map<String, String> rejectPurchaseRequest(long id) {
+    PurchaseRequest purchaseRequest = requestRepository.findById(id).orElseThrow(() -> new NotFoundException(PURCHASE_REQUEST_NOT_FOUND));
+    if (statusCanNotBeChanged(purchaseRequest)) return Map.of(SUCCESS, STATUS_CANNOT_CHANGE);
+
+    AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    List<String> roles = getRoles(purchaseRequest);
+
+    if (isLevelOneApprover(roles, authUser)) {
+      purchaseRequest.setStatus(Status.REJECTED);
+    } else if (canNotBeUpdated(roles, authUser)) {
+      throw new AuthorizationDeniedException(LEVEL_TWO_UPDATE_ERROR);
+    } else if (isLevelTwoApprover(roles, authUser)) {
+      purchaseRequest.setStatus(Status.REJECTED);
+    } else {
+      throw new AuthorizationDeniedException(LEVEL_ONE_UPDATE_ERROR);
+    }
+
+    purchaseRequest.setRejectedAt(LocalDateTime.now());
+    PurchaseRequest request = requestRepository.save(purchaseRequest);
+    return Map.of(SUCCESS, STATUS_UPDATE_SUCCESS.formatted(request.getTitle()));
   }
 }

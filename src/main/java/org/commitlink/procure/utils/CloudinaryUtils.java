@@ -10,7 +10,7 @@ import static org.commitlink.procure.utils.Constants.USE_FILENAME;
 import com.cloudinary.utils.ObjectUtils;
 import java.util.Map;
 
-public class CloudinaryUtil {
+public class CloudinaryUtils {
 
   public static Map uploadParams(String fileName) {
     return ObjectUtils.asMap(

@@ -4,7 +4,7 @@ import static org.commitlink.procure.utils.Constants.AUTH_URL;
 import static org.commitlink.procure.utils.Constants.REQUEST_PURCHASE_URL;
 import static org.commitlink.procure.utils.Constants.USER_URLS;
 import static org.commitlink.procure.utils.Constants.WHITE_LIST_URL;
-import static org.commitlink.procure.utils.HttpUtil.authenticationErrorMessage;
+import static org.commitlink.procure.utils.HttpUtils.authenticationErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

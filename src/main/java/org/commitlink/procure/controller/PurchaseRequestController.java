@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
 import org.commitlink.procure.dto.purchase.PurchaseRequestListPaginationResponse;
@@ -42,7 +43,7 @@ public class PurchaseRequestController {
       description = "Purchase request JSON data",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PurchaseRequestDTO.class))
     ) @RequestPart @Valid PurchaseRequestDTO purchaseRequest,
-    @RequestPart MultipartFile proforma
+    @RequestPart(required = false) MultipartFile proforma
   ) {
     return purchaseRequestService.createPurchaseRequest(purchaseRequest, proforma);
   }
@@ -64,14 +65,14 @@ public class PurchaseRequestController {
 
   @PatchMapping(value = "/{id}/approve", produces = MediaType.APPLICATION_JSON_VALUE)
   @Operation(summary = "Purchase status update request")
-  public PurchaseRequestResponse purchaseRequestStatusApprove(@PathVariable long id) {
-    return null;
+  public Map<String, String> purchaseRequestStatusApprove(@PathVariable long id) {
+    return purchaseRequestService.approvePurchaseRequest(id);
   }
 
   @PatchMapping(value = "/{id}/reject", produces = MediaType.APPLICATION_JSON_VALUE)
   @Operation(summary = "Purchase status update request")
-  public PurchaseRequestResponse purchaseRequestStatusReject(@PathVariable long id) {
-    return null;
+  public Map<String, String> purchaseRequestStatusReject(@PathVariable long id) {
+    return purchaseRequestService.rejectPurchaseRequest(id);
   }
 
   @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

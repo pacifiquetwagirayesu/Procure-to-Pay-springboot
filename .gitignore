@@ -10,7 +10,8 @@ build
 .env-docker
 # BlueJ files
 *.ctxt
-
+proforma
+.DS_Store
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
