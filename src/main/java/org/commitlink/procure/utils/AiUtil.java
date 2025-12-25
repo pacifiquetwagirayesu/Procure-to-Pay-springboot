@@ -13,38 +13,6 @@ public class AiUtil {
                 Here is the content from pdf file, I want to format this content into json. \
                 Please provide me a json content of this: %s \n
 
-              Task:
-              Extract structured purchase and billing information from the provided text and return it only as valid JSON.
-
-              Extraction Rules
-              1. Item Extraction
-
-              For each item mentioned:
-
-              item_name: Identify and extract the product name only.
-
-              quantity: Extract the numerical quantity (must be a number).
-
-              unit_price: Extract the numerical unit price.
-
-              total: Extract the numerical total price.
-
-              Important:
-
-              Ignore irrelevant words such as descriptions, page numbers (e.g., 200-page, ruled, pages), sizes, or any non-pricing details.
-
-              Do not include extra text or explanations.
-
-              2. Metadata Extraction
-
-              created_by: Extract the name of the person who created the purchase (if present).
-
-              purchase_details: Extract the purpose or description of the purchase.
-
-              billing_info:
-
-              Extract invoice number, date, status, and payment information if available.
-
               Output Format (STRICT)
               Return only a valid JSON object using the following structure:
 
@@ -54,6 +22,7 @@ public class AiUtil {
                 "items": [
                   {
                     "item_name": "string",
+                    "description": "string"
                     "quantity": number,
                     "unit_price": number,
                     "total": number

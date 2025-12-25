@@ -2,8 +2,6 @@ package org.commitlink.procure.utils;
 
 import static org.commitlink.procure.utils.UserMapper.userPurchaseRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -13,7 +11,6 @@ import org.commitlink.procure.dto.purchase.PurchaseItemDTO;
 import org.commitlink.procure.dto.purchase.PurchaseItemResponse;
 import org.commitlink.procure.dto.purchase.PurchaseRequestDTO;
 import org.commitlink.procure.dto.purchase.PurchaseRequestResponse;
-import org.commitlink.procure.dto.purchase.proforma.ProformaMetadataDTO;
 import org.commitlink.procure.models.purchase.PurchaseItem;
 import org.commitlink.procure.models.purchase.PurchaseRequest;
 
@@ -65,11 +62,8 @@ public class PurchaseRequestMapper {
       userPurchaseRequest.apply(res.getCreatedBy()),
       res.getApprovedBy().stream().map(approver -> userPurchaseRequest.apply(approver)).toList(),
       res.getProforma(),
-      res.getProformaMetadata() != null ? proformaMetadataDTO(res) : null,
       res.getPurchaseOrder(),
-      res.getPurchaseOrderMetadata(),
       res.getReceipt(),
-      res.getReceiptMetadata(),
       res.getReceiptValidation(),
       res.getApprovedAt(),
       res.getRejectedAt(),
@@ -77,16 +71,20 @@ public class PurchaseRequestMapper {
       res.getUpdatedAt()
     );
 
-  private static ProformaMetadataDTO proformaMetadataDTO(PurchaseRequest request) {
-    try {
-      return new ObjectMapper().readValue(request.getProformaMetadata(), ProformaMetadataDTO.class);
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
-    }
-    return null;
-  }
-
-  public static List<PurchaseItem> getPurchaseItems(PurchaseRequestDTO purchaseRequest) {
-    return purchaseRequest.items() != null ? purchaseRequest.items().stream().map(item -> mapRequestItem.apply(item)).toList() : null;
+  public static List<PurchaseItem> getPurchaseRequestItems(PurchaseRequestDTO purchaseRequest) {
+    return purchaseRequest
+      .items()
+      .stream()
+      .map(item ->
+        PurchaseItem
+          .builder()
+          .itemName(item.itemName())
+          .description(item.description())
+          .quantity(item.quantity())
+          .unitPrice(item.unitPrice())
+          .totalPrice(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())))
+          .build()
+      )
+      .toList();
   }
 }

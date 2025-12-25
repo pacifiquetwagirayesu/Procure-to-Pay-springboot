@@ -337,7 +337,7 @@ public class InvoiceGeneratorUtils {
     }
   }
 
-  public static void generatePurchaseOrder(PurchaseRequest purchaseRequest, String outputPath) {
+  public static void generateInvoice(PurchaseRequest purchaseRequest, String outputPath) {
     try {
       byte[] pdfBytes = generateInvoice(purchaseRequest);
       Files.write(Paths.get(outputPath), pdfBytes);
