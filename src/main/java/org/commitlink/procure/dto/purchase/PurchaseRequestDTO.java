@@ -10,5 +10,5 @@ public record PurchaseRequestDTO(
   @NotBlank(message = "purchase title is required") String title,
   @NotBlank(message = "purchase description is required") String description,
   @DecimalMin(value = "0.01", message = "total amount must greater than 0") @JsonProperty("total_amount") BigDecimal totalAmount,
-  List<RequestItemDTO> items
+  List<PurchaseItemDTO> items
 ) {}

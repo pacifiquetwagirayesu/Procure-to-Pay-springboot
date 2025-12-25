@@ -60,6 +60,11 @@ public class Constants {
   public static final String STATUS = "status";
   public static final String PATH = "path";
   public static final String TIMESTAMP = "timestamp";
+  public static final String STATUS_CANNOT_CHANGE = "purchase request status can not be changed";
+  public static final String STATUS_UPDATE_SUCCESS = "purchase request  '%s' is status is changed";
+  public static final String SUCCESS = "success";
+  public static final String LEVEL_ONE_UPDATE_ERROR = "Invalid Request, Approver Level 1 is required";
+  public static final String LEVEL_TWO_UPDATE_ERROR = "Invalid Request, Approver Level 2 is required";
 
   // HTTP REQUEST
   public static final String INVALID_EMAIL = "Invalid email";
@@ -84,5 +89,5 @@ public class Constants {
   public static final String PUBLIC_ID = "public_id";
 
   // LOGS
-  public static final String UPLOAD_ERROR = "IError: {}";
+  public static final String ERROR = "Error: {}";
 }

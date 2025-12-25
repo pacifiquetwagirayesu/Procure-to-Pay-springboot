@@ -3,7 +3,7 @@ package org.commitlink.procure.config.security;
 import static org.commitlink.procure.utils.Constants.BEARER_KEY;
 import static org.commitlink.procure.utils.Constants.EXEMPT_FOR_AUTH_FILTER;
 import static org.commitlink.procure.utils.Constants.PREFIX;
-import static org.commitlink.procure.utils.HttpUtil.authenticationErrorMessage;
+import static org.commitlink.procure.utils.HttpUtils.authenticationErrorMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;

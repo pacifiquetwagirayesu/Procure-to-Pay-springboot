@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -51,7 +50,7 @@ public class PurchaseRequest {
   private Status status;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<RequestItem> items;
+  private List<PurchaseItem> items;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "created_by_id")
@@ -94,10 +93,5 @@ public class PurchaseRequest {
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
-  }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
   }
 }

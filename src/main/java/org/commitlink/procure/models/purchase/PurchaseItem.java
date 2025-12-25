@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Data
-public class RequestItem {
+public class PurchaseItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "item_seq_id")
