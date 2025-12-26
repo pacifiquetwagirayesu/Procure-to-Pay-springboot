@@ -10,7 +10,8 @@ import static org.commitlink.procure.utils.Constants.STATUS_UPDATE_SUCCESS;
 import static org.commitlink.procure.utils.Constants.SUCCESS;
 import static org.commitlink.procure.utils.Constants.URL;
 import static org.commitlink.procure.utils.Constants.USER_NOT_FOUND;
-import static org.commitlink.procure.utils.PurchaseRequestMapper.getPurchaseItems;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.calculateTotalAmount;
+import static org.commitlink.procure.utils.PurchaseRequestMapper.getPurchaseRequestItems;
 import static org.commitlink.procure.utils.PurchaseRequestMapper.purchaseRequestResponseMapper;
 import static org.commitlink.procure.utils.RoleUtils.canNotBeUpdated;
 import static org.commitlink.procure.utils.RoleUtils.getRoles;
@@ -20,10 +21,14 @@ import static org.commitlink.procure.utils.RoleUtils.isLevelTwoApprover;
 import static org.commitlink.procure.utils.RoleUtils.statusCanNotBeChanged;
 
 import com.cloudinary.Cloudinary;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +46,7 @@ import org.commitlink.procure.repository.IPurchaseRequestRepository;
 import org.commitlink.procure.repository.IUserRepository;
 import org.commitlink.procure.services.IPurchaseRequestService;
 import org.commitlink.procure.utils.FileUtils;
-import org.commitlink.procure.utils.ProformaInvoiceUtils;
-import org.springframework.ai.chat.client.ChatClient;
+import org.commitlink.procure.utils.PurchaseOrderInvoiceGenerator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -63,8 +67,8 @@ public class PurchaseRequestService implements IPurchaseRequestService {
   private final Cloudinary cloudinary;
   private final IPurchaseRequestRepository requestRepository;
   private final IUserRepository userRepository;
-  private final ChatClient chatClient;
   private final ExecutorService executorService;
+  private final ObjectMapper mapper;
 
   @Override
   @PreAuthorize("hasRole('STAFF')")
@@ -79,24 +83,27 @@ public class PurchaseRequestService implements IPurchaseRequestService {
       .description(purchaseRequest.description())
       .amount(purchaseRequest.totalAmount().setScale(2, RoundingMode.HALF_UP))
       .status(Status.PENDING)
-      .items(getPurchaseItems(purchaseRequest))
+      .items(getPurchaseRequestItems(purchaseRequest))
       .createdBy(user)
       .proforma(null)
       .build();
 
-    PurchaseRequest savedRequest = requestRepository.save(request);
-
     if (proforma != null && !proforma.isEmpty()) {
       try {
         Map upload = cloudinary.uploader().upload(proforma.getBytes(), uploadParams(proforma.getOriginalFilename()));
-        savedRequest.setProforma(upload.get(URL).toString());
-        String invoiceData = FileUtils.extractTextFromProforma(proforma);
-        ProformaInvoiceUtils.extractProformaMetadataAndSave(savedRequest, requestRepository, executorService, chatClient, invoiceData);
+        request.setProforma(upload.get(URL).toString());
+        String metaData = FileUtils.extractTextFromProforma(proforma);
+        request.setProformaMetadata(mapper.writeValueAsString(metaData).replaceAll("\"\"\"", " "));
       } catch (Exception e) {
         log.info(ERROR, e.getMessage());
       }
     }
 
+    BigDecimal totalAmount = calculateTotalAmount.apply(request.getItems());
+    if (!Objects.equals(totalAmount, BigDecimal.ZERO)) request.setAmount(totalAmount);
+    request.setAmount(totalAmount);
+
+    PurchaseRequest savedRequest = requestRepository.save(request);
     return savedRequest.getId();
   }
 
@@ -151,15 +158,18 @@ public class PurchaseRequestService implements IPurchaseRequestService {
 
     if (isLevelOneApprover(roles, authUser)) {
       purchaseRequest.getApprovedBy().add(user);
-      purchaseRequest.setStatus(Status.PENDING);
     } else if (canNotBeUpdated(roles, authUser)) {
       throw new AuthorizationDeniedException(LEVEL_TWO_UPDATE_ERROR);
     } else if (isLevelTwoApprover(roles, authUser)) {
       purchaseRequest.getApprovedBy().add(user);
       purchaseRequest.setStatus(Status.APPROVED);
       purchaseRequest.setApprovedAt(LocalDateTime.now());
-      //      generatePurchaseOrder(purchaseRequest, "proforma/%s_%s.pdf".formatted(purchaseRequest.getCreatedBy().getFirstName(),purchaseRequest.getCreatedBy().getLastName()));
 
+      try {
+        PurchaseOrderInvoiceGenerator.generatePurchaseOrderInvoice(purchaseRequest);
+      } catch (IOException e) {
+        log.error(ERROR, e.getMessage());
+      }
     } else {
       throw new AuthorizationDeniedException(LEVEL_ONE_UPDATE_ERROR);
     }
